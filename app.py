@@ -1,3 +1,13 @@
+import nltk
+import os
+
+# Ensure NLTK data is downloaded to a specific path
+nltk.download('punkt', download_dir='/tmp/nltk_data')
+nltk.download('stopwords', download_dir='/tmp/nltk_data')
+
+# Set the NLTK data path
+nltk.data.path.append('/tmp/nltk_data')
+
 import streamlit as st
 import pickle
 import string
