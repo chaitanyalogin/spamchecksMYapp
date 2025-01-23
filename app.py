@@ -9,9 +9,14 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-# Download NLTK data
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
+# Specify a custom download directory
+nltk_data_dir = os.path.join(os.getcwd(), 'nltk_data')
+os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+
+# Download NLTK data to the specified directory
+nltk.download('punkt', download_dir=nltk_data_dir)
+nltk.download('stopwords', download_dir=nltk_data_dir)
 
 import streamlit as st
 import pickle
@@ -22,8 +27,16 @@ from nltk.stem.porter import PorterStemmer
 ps = PorterStemmer()
 
 def transform_text(text):
+    if not text:  # Add check for empty input
+        return ""
+    
     text = text.lower()
-    text = nltk.word_tokenize(text)
+    try:
+        text = nltk.word_tokenize(text)
+    except LookupError:
+        # Fallback tokenization if NLTK download fails
+        text = text.split()
+    
     y = []
     for i in text:
         if i.isalnum():
